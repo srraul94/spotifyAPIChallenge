@@ -4,9 +4,20 @@ namespace App\Http\Controllers;
 
 use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Validation\ValidationException;
 
 class AuthController extends Controller
 {
+    /**
+     * Handle the registration of a new user.
+     *
+     * Validates the input data, creates a new user in the database, and generates
+     * an auth token for the registered user.
+     *
+     * @param Request $request The HTTP request instance containing user data.
+     * @return array An array with the created user and the authentication token.
+     * @throws ValidationException If validation fails.
+     */
     public function register(Request $request)
     {
         $data = $request->validate([
@@ -25,6 +36,17 @@ class AuthController extends Controller
         ];
     }
 
+    /**
+     * Handle the login process for an existing user.
+     *
+     * Validates the input data, verifies the user's credentials,
+     * and generates an authentication token if the credentials are valid.
+     * Returns an error response if the credentials are invalid.
+     *
+     * @param Request $request The HTTP request instance containing login data.
+     * @return array|Illuminate\Http\Response An array with the authenticated user and the authentication token, or an error response on failure.
+     * @throws ValidationException If validation fails.
+     */
     public function login(Request $request)
     {
         $data = $request->validate([
@@ -48,6 +70,14 @@ class AuthController extends Controller
         ];
     }
 
+    /**
+     * Retrieve the authenticated user from the request.
+     *
+     * Returns the currently authenticated user based on the provided HTTP request.
+     *
+     * @param Request $request The HTTP request instance.
+     * @return \Illuminate\Contracts\Auth\Authenticatable|null The authenticated user or null if not authenticated.
+     */
     public function getUser(Request $request)
     {
         return $request->user();
