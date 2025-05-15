@@ -1,61 +1,94 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+# 📀 spotifyAPIChallenge
 
-## About Laravel
+Aplicación API construida con Laravel que interactúa con la API de Spotify para ofrecer funcionalidades como la autenticación de usuarios en la aplicación y la obtención de datos relacionados con albums y artistas.
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+---
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+## 🚀 Descripción
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+Este proyecto es un desafío técnico que implementa una API rest en PHP utilizando el framework Laravel. 
+Permite a los usuarios autenticarse con su cuenta de Spotify (mediante sus datos de API). La aplicación proporciona endpoints RESTful para interactuar con la API de Spotify y obtener información relevante para el usuario.
 
-## Learning Laravel
+---
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
+## 🛠️ Tecnologías utilizadas
 
-You may also try the [Laravel Bootcamp](https://bootcamp.laravel.com), where you will be guided through building a modern Laravel application from scratch.
+- **Backend**: Laravel 12
+- **Autenticación**: OAuth 2.0 con la API de Spotify / Implementada con Laravel Sanctum
+- **Entorno de desarrollo**: Docker / Laravel Valet en macOS
+- **Base de datos**: MySQL
+---
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+## 📦 Instalación
 
-## Laravel Sponsors
+1. Clona este repositorio en tu máquina local:
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the [Laravel Partners program](https://partners.laravel.com).
+   ```bash
+   git clone https://github.com/srraul94/spotifyAPIChallenge.git
+   cd spotifyAPIChallenge
+   ```
 
-### Premium Partners
+2. Copia el archivo `.env.example` a `.env` y configura las variables de entorno necesarias (BD, nombre de App...), incluyendo las credenciales de la API de Spotify.
 
-- **[Vehikl](https://vehikl.com)**
-- **[Tighten Co.](https://tighten.co)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel)**
-- **[DevSquad](https://devsquad.com/hire-laravel-developers)**
-- **[Redberry](https://redberry.international/laravel-development)**
-- **[Active Logic](https://activelogic.com)**
+   ```env
+    SPOTIFY_API_TOKEN_URI=https://accounts.spotify.com/api/token
+    SPOTIFY_CLIENT_ID='tu-client-id'
+    SPOTIFY_CLIENT_SECRET='tu-client-secret'
+    SPOTIFY_ACCESS_TOKEN='tu-access-token'
+     ```
 
-## Contributing
+3. Construye y levanta los contenedores de Docker:
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+   ```bash
+   docker-compose up -d
+   ```
 
-## Code of Conduct
+4. Accede al contenedor de la aplicación:
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+   ```bash
+   docker-compose exec app bash
+   ```
 
-## Security Vulnerabilities
+5. Instala las dependencias de PHP:
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+   ```bash
+   composer install
+   ```
 
-## License
+6. Genera la clave de la aplicación:
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+   ```bash
+   php artisan key:generate
+   ```
+
+7. Migra la base de datos:
+
+   ```bash
+   php artisan migrate
+   ```
+
+8. Inicia el servidor de desarrollo:
+
+   ```bash
+   php artisan serve
+   ```
+
+La aplicación estará disponible en [http://localhost:8000](http://localhost:8000).
+
+---
+
+
+
+## 🔐 Autenticación con Spotify
+
+Para utilizar la API de Spotify, es necesario registrar tu aplicación en el [Spotify Developer Dashboard](https://developer.spotify.com/dashboard/applications) y obtener un `Client ID` y un `Client Secret`. Estas credenciales deben ser configuradas en el archivo `.env` para habilitar la autenticación OAuth 2.0.
+
+
+---
+## 📌 Notas adicionales
+
+- Este proyecto es una implementación básica y puede requerir mejoras seguridad y optimización de rendimiento.
+- Se recomienda revisar la documentación oficial de la API de Spotify para comprender mejor los endpoints disponibles y sus limitaciones.
+
+---
