@@ -5,7 +5,7 @@ namespace App\Http\Resources;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
-class ArtistResource extends JsonResource
+class AlbumResource extends JsonResource
 {
     /**
      * Transform the resource into an array.
@@ -15,14 +15,15 @@ class ArtistResource extends JsonResource
     public function toArray(Request $request): array
     {
         return [
-            'artist' => [
+            'album' => [
                 'id' => $this['id'],
                 'name' => $this['name'],
-                'followers' => $this['followers']['total'] ?? '',
+                'release_date' => $this['release_date'],
                 'url' => $this['external_urls']['spotify'],
-                'profile_image' => $this['images'][0]['url'] ?? ''
+                'image' => $this['images'][0]['url'] ?? '',
+                'artist' => new ArtistForAlbumResource($this['artists'][0]),
             ],
-            'message' => 'Datos del artista obtenidos correctamente'
+            'message' => 'Datos del album obtenidos correctamente'
         ];
     }
 }

@@ -5,7 +5,7 @@ namespace App\Http\Resources;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
-class ArtistResource extends JsonResource
+class ArtistForAlbumResource extends JsonResource
 {
     /**
      * Transform the resource into an array.
@@ -18,11 +18,8 @@ class ArtistResource extends JsonResource
             'artist' => [
                 'id' => $this['id'],
                 'name' => $this['name'],
-                'followers' => $this['followers']['total'] ?? '',
                 'url' => $this['external_urls']['spotify'],
-                'profile_image' => $this['images'][0]['url'] ?? ''
             ],
-            'message' => 'Datos del artista obtenidos correctamente'
         ];
     }
 }

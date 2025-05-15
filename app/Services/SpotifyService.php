@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use App\Http\Resources\AlbumResource;
 use App\Http\Resources\ArtistResource;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Http;
@@ -19,6 +20,7 @@ class SpotifyService
 
     private const CACHE_KEY = 'spotify_access_token';
     private const ARTISTS_ENDPOINT = 'https://api.spotify.com/v1/artists/';
+    private const ALBUM_ENDPOINT = 'https://api.spotify.com/v1/albums/';
 
 
     public function getSpotifyAccessToken(): array
@@ -68,7 +70,7 @@ class SpotifyService
 
     }
 
-    public function getSpotifyArtistByID($artistId)
+    public function getSpotifyArtistByID($artistId): array|ArtistResource
     {
         $accessToken = self::getCacheSpotifyAccessToken();
 
@@ -92,6 +94,46 @@ class SpotifyService
             $artistResponse = self::prepareSpotifyArtistResponse($responseSpotify);
 
             return $artistResponse;
+
+        } catch (\Exception $e) {
+            Log::error('Exception while requesting Spotify token', [
+                'message' => $e->getMessage()
+            ]);
+
+            return [
+                'success' => false,
+                'access_token' => null,
+                'error_code' => $responseSpotify->status() ?? 500,
+                'message' => $e->getMessage()
+            ];
+        }
+
+    }
+
+    public function getSpotifyAlbumByID($albumId): array|AlbumResource
+    {
+        $accessToken = self::getCacheSpotifyAccessToken();
+
+        if (is_null($accessToken)) {
+            throw new \RuntimeException('El token de Spotify ha caducado. Visita /api/get-spotify-access-token para obtener uno nuevo.');
+        }
+
+        $spotifyAPI = env('SPOTIFY_API_TOKEN_URI');
+        $clientId = env('SPOTIFY_CLIENT_ID');
+        $clientSecret = env('SPOTIFY_CLIENT_SECRET');
+
+        if (!$clientId || !$clientSecret || !$spotifyAPI) {
+            throw new \RuntimeException('Faltan credenciales de Spotify en .env');
+        }
+
+        try {
+            $responseSpotify =  Http::withToken($accessToken)
+                ->get(self::ALBUM_ENDPOINT.$albumId);
+
+
+            $albumResponse = self::prepareSpotifyAlbumResponse($responseSpotify);
+
+            return $albumResponse;
 
         } catch (\Exception $e) {
             Log::error('Exception while requesting Spotify token', [
@@ -172,7 +214,7 @@ class SpotifyService
         }
     }
 
-    private function prepareSpotifyArtistResponse($responseSpotify)
+    private function prepareSpotifyArtistResponse($responseSpotify): array|ArtistResource
     {
         switch ($responseSpotify->status()) {
             case 200:
@@ -212,6 +254,57 @@ class SpotifyService
 
             default:
                 Log::error('Spotify API - Artists : Unknown status code', [
+                    'status' => $responseSpotify->status(),
+                    'body' => $responseSpotify->body()
+                ]);
+                return [
+                    'success' => false,
+                    'error_code' => $responseSpotify->status(),
+                    'message' => 'Error desconocido al solicitar el token.'
+                ];
+        }
+    }
+
+    private function prepareSpotifyAlbumResponse($responseSpotify): array|AlbumResource
+    {
+        switch ($responseSpotify->status()) {
+            case 200:
+                $data = $responseSpotify->json();
+                return new AlbumResource($data);
+
+            case 400:
+                $error = $responseSpotify->json();
+                Log::warning('Spotify API - Albums: Bad Request', ['response' => $error]);
+                return [
+                    'success' => false,
+                    'error_code' => 400,
+                    'message' => 'Solicitud incorrecta: ' . ($error['error_description'] ?? 'Bad Request')
+                ];
+
+            case 401:
+                $error = $responseSpotify->json();
+                Log::error('Spotify API - Albums: Unauthorized', ['response' => $error]);
+                return [
+                    'success' => false,
+                    'error_code' => 401,
+                    'message' => 'No autorizado: revisa tu client_id y client_secret'
+                ];
+
+            case 500:
+            case 502:
+            case 503:
+                Log::error('Spotify API - Albums: Server Error', [
+                    'status' => $responseSpotify->status(),
+                    'body' => $responseSpotify->body()
+                ]);
+                return [
+                    'success' => false,
+                    'error_code' => $responseSpotify->status(),
+                    'message' => 'Error del servidor de Spotify, intenta más tarde.'
+                ];
+
+            default:
+                Log::error('Spotify API - Albums: Unknown status code', [
                     'status' => $responseSpotify->status(),
                     'body' => $responseSpotify->body()
                 ]);

@@ -16,6 +16,10 @@ Route::middleware('auth:sanctum')->group( function () {
         Route::get('/get-artist/{artistID}', [SpotifyController::class, 'getArtistByID']);
     });
 
+    Route::prefix('albums')->group(function () {
+        Route::get('/get-album/{albumID}', [SpotifyController::class, 'getAlbumByID']);
+    });
+
 });
 
 

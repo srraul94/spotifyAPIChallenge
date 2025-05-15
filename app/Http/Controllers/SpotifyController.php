@@ -3,7 +3,6 @@
 namespace App\Http\Controllers;
 
 use App\Services\SpotifyService;
-use http\Env\Request;
 use Illuminate\Http\Request as HttpRequest;
 
 class SpotifyController extends Controller
@@ -24,6 +23,12 @@ class SpotifyController extends Controller
     public function getArtistByID(HttpRequest $request, $artistID)
     {
         $response = $this->spotify->getSpotifyArtistByID($artistID);
+        return $response;
+    }
+
+    public function getAlbumByID(HttpRequest $request, $albumID)
+    {
+        $response = $this->spotify->getSpotifyAlbumByID($albumID);
         return $response;
     }
 }
