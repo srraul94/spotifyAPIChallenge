@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use App\Http\Resources\ArtistResource;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
@@ -171,22 +172,12 @@ class SpotifyService
         }
     }
 
-    private function prepareSpotifyArtistResponse($responseSpotify): array
+    private function prepareSpotifyArtistResponse($responseSpotify)
     {
         switch ($responseSpotify->status()) {
             case 200:
                 $data = $responseSpotify->json();
-
-                return [
-                    'artist' => [
-                        'id' => $data['id'],
-                        'name' => $data['name'],
-                        'followers' => $data['followers']['total'],
-                        'url' => $data['external_urls']['spotify'],
-                        'profile_image' => $data['images'][0]['url'] ?? ''
-                    ],
-                    'message' => 'Datos del artista obtenidos correctamente'
-                ];
+                return new ArtistResource($data);
 
             case 400:
                 $error = $responseSpotify->json();
