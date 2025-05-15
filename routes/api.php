@@ -10,7 +10,12 @@ Route::post('/login', [AuthController::class, 'login']);
 Route::middleware('auth:sanctum')->group( function () {
     Route::get('/user', [AuthController::class, 'getUser']);
 
-    Route::post('/get-spotify-access-token', [SpotifyController::class, 'getAccessToken']);
+    Route::get('/get-spotify-access-token', [SpotifyController::class, 'getAccessToken']);
+
+    Route::prefix('artists')->group(function () {
+        Route::get('/get-artist/{artistID}', [SpotifyController::class, 'getArtistByID']);
+    });
+
 });
 
 
